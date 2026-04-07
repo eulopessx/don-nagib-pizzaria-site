@@ -8,6 +8,7 @@ import CheckoutPage from './pages/CheckoutPage'
 import LoginPage from './pages/LoginPage'
 import AccountPage from './pages/AccountPage'
 import NotFoundPage from './pages/NotFoundPage'
+import ProtectedRoute from './routes/ProtectedRoute'
 
 export default function App() {
   return (
@@ -20,7 +21,14 @@ export default function App() {
         <Route path="/carrinho" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/minha-conta" element={<AccountPage />} />
+        <Route
+          path="/minha-conta"
+          element={
+            <ProtectedRoute>
+              <AccountPage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
 

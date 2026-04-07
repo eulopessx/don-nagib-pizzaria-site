@@ -1,20 +1,20 @@
 import { Link, NavLink } from 'react-router-dom'
-import { Menu, Phone, ShoppingCart, X } from 'lucide-react'
+import { Menu, Phone, ShoppingCart, User, X } from 'lucide-react'
 import { useState } from 'react'
 import logoHeader from '../../assets/images/logo-header-don-nagib.png'
 import { useCart } from '../../context/CartContext'
+import { useAuth } from '../../context/AuthContext'
 
 const navItems = [
   { label: 'Início', to: '/' },
   { label: 'Cardápio', to: '/cardapio' },
   { label: 'Carrinho', to: '/carrinho' },
-  { label: 'Login', to: '/login' },
-  { label: 'Minha conta', to: '/minha-conta' },
 ]
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const { cartCount } = useCart()
+  const { isAuthenticated } = useAuth()
 
   function closeMenu() {
     setMenuOpen(false)
@@ -40,6 +40,15 @@ export default function Header() {
                 {item.label}
               </NavLink>
             ))}
+
+            <NavLink
+              to={isAuthenticated ? '/minha-conta' : '/login'}
+              className={({ isActive }) =>
+                isActive ? 'nav-link nav-link-active' : 'nav-link'
+              }
+            >
+              {isAuthenticated ? 'Minha conta' : 'Login'}
+            </NavLink>
           </nav>
 
           <div className="header-actions">
@@ -52,6 +61,14 @@ export default function Header() {
               <Phone size={15} />
               <span>WhatsApp</span>
             </a>
+
+            <Link
+              to={isAuthenticated ? '/minha-conta' : '/login'}
+              className="header-cart"
+              aria-label="Conta"
+            >
+              <User size={17} />
+            </Link>
 
             <Link to="/carrinho" className="header-cart" aria-label="Carrinho">
               <ShoppingCart size={17} />
@@ -84,6 +101,16 @@ export default function Header() {
                   {item.label}
                 </NavLink>
               ))}
+
+              <NavLink
+                to={isAuthenticated ? '/minha-conta' : '/login'}
+                onClick={closeMenu}
+                className={({ isActive }) =>
+                  isActive ? 'mobile-nav-link mobile-nav-link-active' : 'mobile-nav-link'
+                }
+              >
+                {isAuthenticated ? 'Minha conta' : 'Login'}
+              </NavLink>
 
               <a
                 href="https://wa.me/5512992325636"

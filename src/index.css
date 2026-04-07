@@ -1101,3 +1101,85 @@ ul {
     grid-template-columns: 1fr;
   }
 }
+.auth-page,
+.account-page {
+  display: flex;
+  justify-content: center;
+}
+
+.auth-card,
+.account-card {
+  width: min(100%, 620px);
+  padding: 28px;
+}
+
+.auth-switch {
+  margin-top: 22px;
+  display: flex;
+  gap: 10px;
+  padding: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 183, 3, 0.08);
+}
+
+.auth-switch-btn {
+  flex: 1;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 16px;
+  background: transparent;
+  color: var(--text-soft);
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.22s ease;
+}
+
+.auth-switch-btn.active {
+  background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
+  color: #351200;
+}
+
+.auth-form {
+  margin-top: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-submit-btn {
+  width: 100%;
+}
+
+.auth-message {
+  border-radius: 16px;
+  padding: 14px 16px;
+  font-size: 0.95rem;
+}
+
+.auth-message.success {
+  background: rgba(47, 191, 113, 0.12);
+  border: 1px solid rgba(47, 191, 113, 0.22);
+  color: #b9ffd5;
+}
+
+.auth-message.error {
+  background: rgba(193, 18, 31, 0.12);
+  border: 1px solid rgba(193, 18, 31, 0.22);
+  color: #ffd8c2;
+}
+
+.account-user-box {
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255, 183, 3, 0.06);
+  border: 1px solid rgba(255, 183, 3, 0.12);
+}
+
+.account-actions {
+  margin-top: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}

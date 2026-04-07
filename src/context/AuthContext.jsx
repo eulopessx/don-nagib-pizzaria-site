@@ -5,6 +5,7 @@ const AuthContext = createContext()
 
 const ADMIN_EMAILS = [
   'jeannagibb@gmail.com',
+  'joao.motoe4@gmail.com',
 ]
 
 export function AuthProvider({ children }) {

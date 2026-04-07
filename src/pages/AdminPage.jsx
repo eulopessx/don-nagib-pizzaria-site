@@ -11,7 +11,8 @@ const initialForm = {
   name: '',
   description: '',
   category: 'Promocional',
-  has_sizes: true,
+  has_size_m: true,
+  has_size_g: true,
   price_m: '',
   price_g: '',
   price_single: '',
@@ -59,14 +60,24 @@ export default function AdminPage() {
     setMessage('')
     setErrorMessage('')
 
+    const hasAnySize = formData.has_size_m || formData.has_size_g
+
     const payload = {
       name: formData.name,
       description: formData.description,
       category: formData.category,
-      has_sizes: formData.has_sizes,
-      price_m: formData.has_sizes && formData.price_m ? Number(String(formData.price_m).replace(',', '.')) : null,
-      price_g: formData.has_sizes && formData.price_g ? Number(String(formData.price_g).replace(',', '.')) : null,
-      price_single: !formData.has_sizes && formData.price_single ? Number(String(formData.price_single).replace(',', '.')) : null,
+      has_sizes: hasAnySize,
+      has_size_m: formData.has_size_m,
+      has_size_g: formData.has_size_g,
+      price_m: formData.has_size_m && formData.price_m
+        ? Number(String(formData.price_m).replace(',', '.'))
+        : null,
+      price_g: formData.has_size_g && formData.price_g
+        ? Number(String(formData.price_g).replace(',', '.'))
+        : null,
+      price_single: !hasAnySize && formData.price_single
+        ? Number(String(formData.price_single).replace(',', '.'))
+        : null,
       active: formData.active,
     }
 
@@ -92,7 +103,8 @@ export default function AdminPage() {
       name: product.name || '',
       description: product.description || '',
       category: product.category || 'Promocional',
-      has_sizes: product.has_sizes,
+      has_size_m: product.has_size_m ?? !!product.price_m,
+      has_size_g: product.has_size_g ?? !!product.price_g,
       price_m: product.price_m ?? '',
       price_g: product.price_g ?? '',
       price_single: product.price_single ?? '',
@@ -153,7 +165,12 @@ export default function AdminPage() {
           <div className="checkout-form-grid">
             <div className="checkout-field">
               <label>Nome</label>
-              <input name="name" value={formData.name} onChange={handleChange} placeholder="Nome do produto" />
+              <input
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Nome do produto"
+              />
             </div>
 
             <div className="checkout-field">
@@ -180,42 +197,66 @@ export default function AdminPage() {
             </div>
 
             <div className="checkout-field">
-              <label>
+              <label className="admin-check-label">
                 <input
                   type="checkbox"
-                  name="has_sizes"
-                  checked={formData.has_sizes}
+                  name="has_size_m"
+                  checked={formData.has_size_m}
                   onChange={handleChange}
-                />{' '}
-                Possui tamanhos M e G
+                />
+                Tamanho M
               </label>
             </div>
 
             <div className="checkout-field">
-              <label>
+              <label className="admin-check-label">
+                <input
+                  type="checkbox"
+                  name="has_size_g"
+                  checked={formData.has_size_g}
+                  onChange={handleChange}
+                />
+                Tamanho G
+              </label>
+            </div>
+
+            <div className="checkout-field">
+              <label className="admin-check-label">
                 <input
                   type="checkbox"
                   name="active"
                   checked={formData.active}
                   onChange={handleChange}
-                />{' '}
+                />
                 Produto ativo
               </label>
             </div>
 
-            {formData.has_sizes ? (
-              <>
-                <div className="checkout-field">
-                  <label>Preço M</label>
-                  <input name="price_m" value={formData.price_m} onChange={handleChange} placeholder="29,90" />
-                </div>
+            {formData.has_size_m && (
+              <div className="checkout-field">
+                <label>Preço M</label>
+                <input
+                  name="price_m"
+                  value={formData.price_m}
+                  onChange={handleChange}
+                  placeholder="29,90"
+                />
+              </div>
+            )}
 
-                <div className="checkout-field">
-                  <label>Preço G</label>
-                  <input name="price_g" value={formData.price_g} onChange={handleChange} placeholder="35,00" />
-                </div>
-              </>
-            ) : (
+            {formData.has_size_g && (
+              <div className="checkout-field">
+                <label>Preço G</label>
+                <input
+                  name="price_g"
+                  value={formData.price_g}
+                  onChange={handleChange}
+                  placeholder="35,00"
+                />
+              </div>
+            )}
+
+            {!formData.has_size_m && !formData.has_size_g && (
               <div className="checkout-field">
                 <label>Preço único</label>
                 <input
@@ -268,18 +309,21 @@ export default function AdminPage() {
                 {product.description && <p>{product.description}</p>}
 
                 <div className="admin-product-prices">
-                  {product.has_sizes ? (
-                    <>
-                      <div className="admin-price-pill">
-                        <span>M</span>
-                        <strong>R$ {Number(product.price_m || 0).toFixed(2).replace('.', ',')}</strong>
-                      </div>
-                      <div className="admin-price-pill">
-                        <span>G</span>
-                        <strong>R$ {Number(product.price_g || 0).toFixed(2).replace('.', ',')}</strong>
-                      </div>
-                    </>
-                  ) : (
+                  {product.has_size_m && (
+                    <div className="admin-price-pill">
+                      <span>M</span>
+                      <strong>R$ {Number(product.price_m || 0).toFixed(2).replace('.', ',')}</strong>
+                    </div>
+                  )}
+
+                  {product.has_size_g && (
+                    <div className="admin-price-pill">
+                      <span>G</span>
+                      <strong>R$ {Number(product.price_g || 0).toFixed(2).replace('.', ',')}</strong>
+                    </div>
+                  )}
+
+                  {!product.has_size_m && !product.has_size_g && (
                     <div className="admin-price-pill single">
                       <span>Único</span>
                       <strong>R$ {Number(product.price_single || 0).toFixed(2).replace('.', ',')}</strong>

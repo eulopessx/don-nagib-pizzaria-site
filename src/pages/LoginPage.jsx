@@ -3,6 +3,14 @@ import { Navigate } from 'react-router-dom'
 import { LogIn, UserPlus } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
+function GoogleMark() {
+  return (
+    <span className="google-mark" aria-hidden="true">
+      G
+    </span>
+  )
+}
+
 export default function LoginPage() {
   const { signIn, signUp, signInWithGoogle, isAuthenticated, authLoading } = useAuth()
 
@@ -150,6 +158,7 @@ export default function LoginPage() {
                 onClick={handleGoogleLogin}
                 disabled={googleLoading}
               >
+                <GoogleMark />
                 {googleLoading ? 'Abrindo Google...' : 'Continuar com Google'}
               </button>
             </div>

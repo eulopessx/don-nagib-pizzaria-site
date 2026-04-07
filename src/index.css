@@ -1358,4 +1358,69 @@ ul {
   gap: 10px;
   font-weight: 700;
   color: var(--text-soft);
+  min-height: 48px;
+  line-height: 1.2;
+  word-break: break-word;
+}
+@media (max-width: 720px) {
+  .admin-form .checkout-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-form .checkout-field {
+    min-width: 0;
+  }
+
+  .admin-form .checkout-field input,
+  .admin-form .checkout-field select,
+  .admin-form .checkout-field textarea {
+    width: 100%;
+  }
+
+  .admin-check-label {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 6px 0;
+  }
+
+  .admin-form-actions {
+    flex-direction: column;
+  }
+
+  .admin-form-actions .btn {
+    width: 100%;
+  }
+}
+.admin-tabs {
+  padding: 12px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.admin-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 1px solid rgba(255, 183, 3, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-soft);
+  border-radius: 999px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.22s ease;
+}
+
+.admin-tab-btn.active {
+  background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
+  color: #351200;
+  box-shadow: 0 8px 22px rgba(255, 183, 3, 0.16);
+}
+
+.admin-tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
 }

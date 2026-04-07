@@ -3,6 +3,10 @@ import { supabase } from '../lib/supabase'
 
 const AuthContext = createContext()
 
+const ADMIN_EMAILS = [
+  'jeannagibb@gmail.com',
+]
+
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null)
   const [user, setUser] = useState(null)
@@ -60,17 +64,20 @@ export function AuthProvider({ children }) {
     return supabase.auth.signOut()
   }
 
+  const isAdmin = ADMIN_EMAILS.includes(user?.email?.toLowerCase())
+
   const value = useMemo(
     () => ({
       session,
       user,
       authLoading,
       isAuthenticated: !!user,
+      isAdmin,
       signUp,
       signIn,
       signOut,
     }),
-    [session, user, authLoading]
+    [session, user, authLoading, isAdmin]
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

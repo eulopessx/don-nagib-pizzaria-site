@@ -1,5 +1,5 @@
 import { Link, NavLink } from 'react-router-dom'
-import { Menu, Phone, ShoppingCart, User, X } from 'lucide-react'
+import { Menu, Phone, ShoppingCart, User, X, ShieldCheck } from 'lucide-react'
 import { useState } from 'react'
 import logoHeader from '../../assets/images/logo-header-don-nagib.png'
 import { useCart } from '../../context/CartContext'
@@ -14,7 +14,7 @@ const navItems = [
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const { cartCount } = useCart()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, isAdmin } = useAuth()
 
   function closeMenu() {
     setMenuOpen(false)
@@ -49,6 +49,17 @@ export default function Header() {
             >
               {isAuthenticated ? 'Minha conta' : 'Login'}
             </NavLink>
+
+            {isAdmin && (
+              <NavLink
+                to="/admin"
+                className={({ isActive }) =>
+                  isActive ? 'nav-link nav-link-active' : 'nav-link'
+                }
+              >
+                Admin
+              </NavLink>
+            )}
           </nav>
 
           <div className="header-actions">
@@ -61,6 +72,12 @@ export default function Header() {
               <Phone size={15} />
               <span>WhatsApp</span>
             </a>
+
+            {isAdmin && (
+              <Link to="/admin" className="header-cart" aria-label="Admin">
+                <ShieldCheck size={17} />
+              </Link>
+            )}
 
             <Link
               to={isAuthenticated ? '/minha-conta' : '/login'}
@@ -111,6 +128,18 @@ export default function Header() {
               >
                 {isAuthenticated ? 'Minha conta' : 'Login'}
               </NavLink>
+
+              {isAdmin && (
+                <NavLink
+                  to="/admin"
+                  onClick={closeMenu}
+                  className={({ isActive }) =>
+                    isActive ? 'mobile-nav-link mobile-nav-link-active' : 'mobile-nav-link'
+                  }
+                >
+                  Admin
+                </NavLink>
+              )}
 
               <a
                 href="https://wa.me/5512992325636"

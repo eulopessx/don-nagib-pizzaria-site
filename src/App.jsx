@@ -10,7 +10,9 @@ import LoginPage from './pages/LoginPage'
 import AccountPage from './pages/AccountPage'
 import NotFoundPage from './pages/NotFoundPage'
 import ProtectedRoute from './routes/ProtectedRoute'
+import AdminRoute from './routes/AdminRoute'
 import AdminPage from './pages/AdminPage'
+
 export default function App() {
   return (
     <>
@@ -18,7 +20,6 @@ export default function App() {
       <Header />
 
       <Routes>
-        <Route path="/admin" element={<AdminPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/cardapio" element={<MenuPage />} />
         <Route path="/carrinho" element={<CartPage />} />
@@ -30,6 +31,14 @@ export default function App() {
             <ProtectedRoute>
               <AccountPage />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminPage />
+            </AdminRoute>
           }
         />
         <Route path="*" element={<NotFoundPage />} />

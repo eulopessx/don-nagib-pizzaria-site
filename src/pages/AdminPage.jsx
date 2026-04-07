@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
+  ChevronDown,
+  ChevronUp,
   Pencil,
   Plus,
   Search,
@@ -26,6 +28,31 @@ const initialForm = {
   price_g: '',
   price_single: '',
   active: true,
+}
+
+function AdminAccordionItem({
+  icon,
+  title,
+  isOpen,
+  onToggle,
+  children,
+}) {
+  return (
+    <section className="admin-accordion-item card">
+      <button type="button" className="admin-accordion-trigger" onClick={onToggle}>
+        <span className="admin-accordion-title">
+          {icon}
+          {title}
+        </span>
+
+        <span className="admin-accordion-arrow">
+          {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+        </span>
+      </button>
+
+      {isOpen && <div className="admin-accordion-content">{children}</div>}
+    </section>
+  )
 }
 
 function AdminSettingsBlock() {
@@ -77,12 +104,7 @@ function AdminSettingsBlock() {
   }
 
   return (
-    <form className="admin-form card" onSubmit={handleSave}>
-      <div className="checkout-card-head">
-        <Settings size={18} />
-        <h2>Informações do site</h2>
-      </div>
-
+    <form className="admin-inner-form" onSubmit={handleSave}>
       <div className="checkout-form-grid">
         <div className="checkout-field">
           <label>Nome da pizzaria</label>
@@ -274,12 +296,7 @@ function AdminProductsBlock() {
 
   return (
     <>
-      <form className="admin-form card" onSubmit={handleSubmit}>
-        <div className="checkout-card-head">
-          <Plus size={18} />
-          <h2>{editingId ? 'Editar produto' : 'Novo produto'}</h2>
-        </div>
-
+      <form className="admin-inner-form" onSubmit={handleSubmit}>
         <div className="checkout-form-grid">
           <div className="checkout-field">
             <label>Nome</label>
@@ -314,40 +331,38 @@ function AdminProductsBlock() {
             />
           </div>
 
-          <div className="checkout-field">
-            <label className="admin-check-label">
-              <input
-                type="checkbox"
-                name="has_size_m"
-                checked={formData.has_size_m}
-                onChange={handleChange}
-              />
-              Tamanho M
-            </label>
-          </div>
+          <div className="checkout-field checkout-field-full">
+            <div className="admin-checkbox-stack">
+              <label className="admin-check-label">
+                <input
+                  type="checkbox"
+                  name="has_size_m"
+                  checked={formData.has_size_m}
+                  onChange={handleChange}
+                />
+                <span>Tamanho M</span>
+              </label>
 
-          <div className="checkout-field">
-            <label className="admin-check-label">
-              <input
-                type="checkbox"
-                name="has_size_g"
-                checked={formData.has_size_g}
-                onChange={handleChange}
-              />
-              Tamanho G
-            </label>
-          </div>
+              <label className="admin-check-label">
+                <input
+                  type="checkbox"
+                  name="has_size_g"
+                  checked={formData.has_size_g}
+                  onChange={handleChange}
+                />
+                <span>Tamanho G</span>
+              </label>
 
-          <div className="checkout-field">
-            <label className="admin-check-label">
-              <input
-                type="checkbox"
-                name="active"
-                checked={formData.active}
-                onChange={handleChange}
-              />
-              Produto ativo
-            </label>
+              <label className="admin-check-label">
+                <input
+                  type="checkbox"
+                  name="active"
+                  checked={formData.active}
+                  onChange={handleChange}
+                />
+                <span>Produto ativo</span>
+              </label>
+            </div>
           </div>
 
           {formData.has_size_m && (
@@ -469,7 +484,11 @@ function AdminProductsBlock() {
 }
 
 export default function AdminPage() {
-  const [activeTab, setActiveTab] = useState('settings')
+  const [openSection, setOpenSection] = useState(null)
+
+  function toggleSection(section) {
+    setOpenSection((current) => (current === section ? null : section))
+  }
 
   return (
     <main className="section">
@@ -481,33 +500,28 @@ export default function AdminPage() {
           </span>
           <h1 className="section-title">Gerenciar site e produtos</h1>
           <p className="section-subtitle">
-            Organize as modificações por abas e gerencie a Don Nagib com mais clareza.
+            Organize as modificações por seções recolhíveis.
           </p>
         </div>
 
-        <div className="admin-tabs card">
-          <button
-            type="button"
-            className={activeTab === 'settings' ? 'admin-tab-btn active' : 'admin-tab-btn'}
-            onClick={() => setActiveTab('settings')}
+        <div className="admin-accordion">
+          <AdminAccordionItem
+            icon={<Settings size={16} />}
+            title="Informações do site"
+            isOpen={openSection === 'settings'}
+            onToggle={() => toggleSection('settings')}
           >
-            <Settings size={16} />
-            Informações do site
-          </button>
+            <AdminSettingsBlock />
+          </AdminAccordionItem>
 
-          <button
-            type="button"
-            className={activeTab === 'products' ? 'admin-tab-btn active' : 'admin-tab-btn'}
-            onClick={() => setActiveTab('products')}
+          <AdminAccordionItem
+            icon={<Pizza size={16} />}
+            title="Produtos"
+            isOpen={openSection === 'products'}
+            onToggle={() => toggleSection('products')}
           >
-            <Pizza size={16} />
-            Produtos
-          </button>
-        </div>
-
-        <div className="admin-tab-content">
-          {activeTab === 'settings' && <AdminSettingsBlock />}
-          {activeTab === 'products' && <AdminProductsBlock />}
+            <AdminProductsBlock />
+          </AdminAccordionItem>
         </div>
       </div>
     </main>

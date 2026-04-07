@@ -1424,3 +1424,105 @@ ul {
   flex-direction: column;
   gap: 22px;
 }
+.admin-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-accordion-item {
+  overflow: hidden;
+}
+
+.admin-accordion-trigger {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  cursor: pointer;
+}
+
+.admin-accordion-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+.admin-accordion-title svg,
+.admin-accordion-arrow svg {
+  color: var(--secondary);
+}
+
+.admin-accordion-content {
+  padding: 0 20px 20px;
+}
+
+.admin-inner-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.admin-checkbox-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 6px;
+}
+
+.admin-check-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  color: var(--text-soft);
+  line-height: 1.2;
+  word-break: normal;
+  white-space: normal;
+}
+
+.admin-check-label input {
+  flex-shrink: 0;
+}
+
+.admin-form-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 720px) {
+  .admin-accordion-trigger {
+    padding: 16px;
+  }
+
+  .admin-accordion-content {
+    padding: 0 16px 16px;
+  }
+
+  .admin-checkbox-stack {
+    gap: 12px;
+  }
+
+  .admin-check-label {
+    width: 100%;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .admin-form-actions {
+    flex-direction: column;
+  }
+
+  .admin-form-actions .btn {
+    width: 100%;
+  }
+}

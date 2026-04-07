@@ -9,6 +9,7 @@ import {
   Truck,
 } from 'lucide-react'
 import logoDonNagib from '../assets/images/logo-don-nagib.png'
+import { useSiteSettings } from '../hooks/useSiteSettings'
 
 const featuredPizzas = [
   {
@@ -38,6 +39,8 @@ const deliveryFees = [
 ]
 
 export default function HomePage() {
+  const { settings } = useSiteSettings()
+
   return (
     <main>
       <section className="hero-section">
@@ -49,15 +52,9 @@ export default function HomePage() {
                 Sabor marcante, entrega rápida
               </span>
 
-              <h1 className="hero-title">
-                A pizza que conquista no primeiro pedaço.
-              </h1>
+              <h1 className="hero-title">{settings.heroTitle}</h1>
 
-              <p className="hero-text">
-                Ingredientes de qualidade, massa crocante por fora, macia por dentro
-                e tudo feito com muito carinho para transformar sua noite em um
-                momento especial.
-              </p>
+              <p className="hero-text">{settings.heroSubtitle}</p>
 
               <div className="hero-actions">
                 <Link to="/cardapio" className="btn btn-primary">
@@ -66,7 +63,7 @@ export default function HomePage() {
 
                 <a
                   className="btn btn-secondary"
-                  href="https://wa.me/5512992325636"
+                  href={`https://wa.me/${settings.storeWhatsapp}`}
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -90,7 +87,7 @@ export default function HomePage() {
                 <div className="mini-card card">
                   <MapPin size={20} />
                   <h3>Atendimento local</h3>
-                  <p>Pindamonhangaba e regiões com taxa por bairro.</p>
+                  <p>{settings.storeAddress}</p>
                 </div>
               </div>
             </div>
@@ -98,7 +95,7 @@ export default function HomePage() {
             <div className="hero-image-wrap">
               <img
                 src={logoDonNagib}
-                alt="Don Nagib Pizzaria Delivery"
+                alt={settings.storeName}
                 className="hero-image"
               />
             </div>
@@ -113,7 +110,7 @@ export default function HomePage() {
             <h2 className="section-title">Sabores para abrir o apetite</h2>
             <p className="section-subtitle">
               Uma seleção inicial dos sabores que mais chamam atenção no cardápio da
-              Don Nagib.
+              {` ${settings.storeName}`}.
             </p>
           </div>
 
@@ -138,7 +135,7 @@ export default function HomePage() {
             <span className="badge">Entrega</span>
             <h2 className="section-title">Taxas por região</h2>
             <p className="section-subtitle">
-              Valores informados no briefing da pizzaria para facilitar o pedido.
+              Valores informados para facilitar o pedido.
             </p>
           </div>
 
@@ -161,7 +158,7 @@ export default function HomePage() {
               <h2 className="section-title">Sua próxima pizza está aqui.</h2>
               <p className="section-subtitle">
                 Faça seu pedido pelo cardápio online ou fale direto no WhatsApp da
-                Don Nagib.
+                {` ${settings.storeName}`}.
               </p>
             </div>
 
@@ -173,7 +170,7 @@ export default function HomePage() {
 
               <a
                 className="btn btn-secondary"
-                href="https://wa.me/5512992325636"
+                href={`https://wa.me/${settings.storeWhatsapp}`}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -188,11 +185,9 @@ export default function HomePage() {
       <section className="section">
         <div className="container">
           <div className="section-heading">
-            <span className="badge">Por que escolher a Don Nagib</span>
+            <span className="badge">Por que escolher a {settings.storeName}</span>
             <h2 className="section-title">Muito mais que pizza</h2>
-            <p className="section-subtitle">
-              Uma pizzaria feita para unir sabor, cuidado e praticidade no seu pedido.
-            </p>
+            <p className="section-subtitle">{settings.aboutText}</p>
           </div>
 
           <div className="featured-grid">
@@ -211,7 +206,7 @@ export default function HomePage() {
             <article className="featured-card card">
               <Truck size={20} />
               <h3>Pedido fácil e rápido</h3>
-              <p>Site, WhatsApp e no futuro conta do cliente para pedir sem preencher tudo outra vez.</p>
+              <p>Site, WhatsApp e conta do cliente para pedir sem preencher tudo outra vez.</p>
             </article>
           </div>
         </div>

@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Pencil, Plus, Search, ShieldCheck, Trash2 } from 'lucide-react'
+import { Pencil, Plus, Search, Settings, ShieldCheck, Trash2 } from 'lucide-react'
 import {
   createProduct,
   deleteProduct,
   getProducts,
   updateProduct,
 } from '../services/productService'
+import { getSiteSettings, upsertSiteSetting } from '../services/siteSettingsService'
 
 const initialForm = {
   name: '',
@@ -17,6 +18,114 @@ const initialForm = {
   price_g: '',
   price_single: '',
   active: true,
+}
+
+function AdminSettingsBlock() {
+  const [form, setForm] = useState({
+    store_name: '',
+    store_phone: '',
+    store_whatsapp: '',
+    store_hours: '',
+    store_address: '',
+    hero_title: '',
+    hero_subtitle: '',
+    about_text: '',
+  })
+  const [saving, setSaving] = useState(false)
+  const [message, setMessage] = useState('')
+
+  useEffect(() => {
+    async function load() {
+      const { data } = await getSiteSettings()
+      if (data) {
+        const mapped = data.reduce((acc, item) => {
+          acc[item.setting_key] = item.setting_value || ''
+          return acc
+        }, {})
+        setForm((prev) => ({ ...prev, ...mapped }))
+      }
+    }
+    load()
+  }, [])
+
+  function handleChange(event) {
+    const { name, value } = event.target
+    setForm((prev) => ({ ...prev, [name]: value }))
+  }
+
+  async function handleSave(event) {
+    event.preventDefault()
+    setSaving(true)
+    setMessage('')
+
+    const entries = Object.entries(form)
+
+    for (const [key, value] of entries) {
+      await upsertSiteSetting(key, value)
+    }
+
+    setSaving(false)
+    setMessage('Informações do site atualizadas com sucesso.')
+  }
+
+  return (
+    <form className="admin-form card" onSubmit={handleSave}>
+      <div className="checkout-card-head">
+        <Settings size={18} />
+        <h2>Informações do site</h2>
+      </div>
+
+      <div className="checkout-form-grid">
+        <div className="checkout-field">
+          <label>Nome da pizzaria</label>
+          <input name="store_name" value={form.store_name} onChange={handleChange} />
+        </div>
+
+        <div className="checkout-field">
+          <label>Telefone</label>
+          <input name="store_phone" value={form.store_phone} onChange={handleChange} />
+        </div>
+
+        <div className="checkout-field">
+          <label>WhatsApp</label>
+          <input name="store_whatsapp" value={form.store_whatsapp} onChange={handleChange} />
+        </div>
+
+        <div className="checkout-field">
+          <label>Horário</label>
+          <input name="store_hours" value={form.store_hours} onChange={handleChange} />
+        </div>
+
+        <div className="checkout-field checkout-field-full">
+          <label>Endereço</label>
+          <input name="store_address" value={form.store_address} onChange={handleChange} />
+        </div>
+
+        <div className="checkout-field checkout-field-full">
+          <label>Título principal da home</label>
+          <input name="hero_title" value={form.hero_title} onChange={handleChange} />
+        </div>
+
+        <div className="checkout-field checkout-field-full">
+          <label>Subtítulo principal</label>
+          <textarea name="hero_subtitle" value={form.hero_subtitle} onChange={handleChange} rows="3" />
+        </div>
+
+        <div className="checkout-field checkout-field-full">
+          <label>Texto institucional</label>
+          <textarea name="about_text" value={form.about_text} onChange={handleChange} rows="3" />
+        </div>
+      </div>
+
+      {message && <div className="auth-message success">{message}</div>}
+
+      <div className="admin-form-actions">
+        <button className="btn btn-primary" type="submit" disabled={saving}>
+          {saving ? 'Salvando...' : 'Salvar informações do site'}
+        </button>
+      </div>
+    </form>
+  )
 }
 
 export default function AdminPage() {
@@ -150,11 +259,13 @@ export default function AdminPage() {
             <ShieldCheck size={16} />
             Painel administrativo
           </span>
-          <h1 className="section-title">Gerenciar produtos</h1>
+          <h1 className="section-title">Gerenciar site e produtos</h1>
           <p className="section-subtitle">
-            Cadastre, edite e exclua itens do cardápio direto pelo painel.
+            Altere informações da home e gerencie o cardápio direto pelo painel.
           </p>
         </div>
+
+        <AdminSettingsBlock />
 
         <form className="admin-form card" onSubmit={handleSubmit}>
           <div className="checkout-card-head">

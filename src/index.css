@@ -1334,3 +1334,14 @@ ul {
     grid-template-columns: 1fr;
   }
 }
+.admin-form {
+  padding: 24px;
+  margin-bottom: 22px;
+}
+
+.admin-form-actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}

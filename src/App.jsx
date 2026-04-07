@@ -10,7 +10,7 @@ import LoginPage from './pages/LoginPage'
 import AccountPage from './pages/AccountPage'
 import NotFoundPage from './pages/NotFoundPage'
 import ProtectedRoute from './routes/ProtectedRoute'
-
+import AdminPage from './pages/AdminPage'
 export default function App() {
   return (
     <>
@@ -18,6 +18,7 @@ export default function App() {
       <Header />
 
       <Routes>
+        <Route path="/admin" element={<AdminPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/cardapio" element={<MenuPage />} />
         <Route path="/carrinho" element={<CartPage />} />

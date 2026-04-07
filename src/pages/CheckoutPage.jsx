@@ -1,11 +1,14 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { CreditCard, MapPin, ShoppingBag, Truck } from 'lucide-react'
 import { useCart } from '../context/CartContext'
 import { deliveryZones } from '../data/deliveryZones'
+import { useAuth } from '../context/AuthContext'
+import { getMyDefaultAddress, getMyProfile } from '../services/accountService'
 
 export default function CheckoutPage() {
   const { cartItems, subtotal } = useCart()
+  const { user } = useAuth()
 
   const [deliveryType, setDeliveryType] = useState('delivery')
   const [paymentMethod, setPaymentMethod] = useState('pix')
@@ -19,6 +22,37 @@ export default function CheckoutPage() {
     notes: '',
     changeFor: '',
   })
+
+  useEffect(() => {
+    async function loadSavedData() {
+      if (!user?.id) return
+
+      const [profileResult, addressResult] = await Promise.all([
+        getMyProfile(user.id),
+        getMyDefaultAddress(user.id),
+      ])
+
+      if (profileResult.data) {
+        setCustomerData((prev) => ({
+          ...prev,
+          name: profileResult.data.full_name || '',
+          phone: profileResult.data.phone || '',
+        }))
+      }
+
+      if (addressResult.data) {
+        setCustomerData((prev) => ({
+          ...prev,
+          street: addressResult.data.street || '',
+          number: addressResult.data.number || '',
+          neighborhood: addressResult.data.neighborhood || '',
+          complement: addressResult.data.complement || '',
+        }))
+      }
+    }
+
+    loadSavedData()
+  }, [user])
 
   const deliveryFee = useMemo(() => {
     if (deliveryType !== 'delivery') return 0
@@ -83,7 +117,6 @@ export default function CheckoutPage() {
       .map((item) => {
         const sizeText = item.size ? ` | Tamanho ${item.size}` : ''
         const totalItem = Number(item.price) * item.quantity
-
         return `• ${item.quantity}x ${item.name}${sizeText} — R$ ${formatMoney(totalItem)}`
       })
       .join('\n')
@@ -122,7 +155,6 @@ ${changeText ? `*${changeText}*\n` : ''}${customerData.notes ? `*Observações:*
 
     const whatsappNumber = '5512992325636'
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
-
     window.open(whatsappUrl, '_blank')
   }
 
@@ -171,11 +203,7 @@ ${changeText ? `*${changeText}*\n` : ''}${customerData.notes ? `*Observações:*
               <div className="checkout-toggle-group">
                 <button
                   type="button"
-                  className={
-                    deliveryType === 'delivery'
-                      ? 'checkout-toggle-btn active'
-                      : 'checkout-toggle-btn'
-                  }
+                  className={deliveryType === 'delivery' ? 'checkout-toggle-btn active' : 'checkout-toggle-btn'}
                   onClick={() => setDeliveryType('delivery')}
                 >
                   Entrega
@@ -183,11 +211,7 @@ ${changeText ? `*${changeText}*\n` : ''}${customerData.notes ? `*Observações:*
 
                 <button
                   type="button"
-                  className={
-                    deliveryType === 'pickup'
-                      ? 'checkout-toggle-btn active'
-                      : 'checkout-toggle-btn'
-                  }
+                  className={deliveryType === 'pickup' ? 'checkout-toggle-btn active' : 'checkout-toggle-btn'}
                   onClick={() => setDeliveryType('pickup')}
                 >
                   Retirada
@@ -204,53 +228,29 @@ ${changeText ? `*${changeText}*\n` : ''}${customerData.notes ? `*Observações:*
               <div className="checkout-form-grid">
                 <div className="checkout-field">
                   <label>Nome</label>
-                  <input
-                    name="name"
-                    value={customerData.name}
-                    onChange={handleChange}
-                    placeholder="Seu nome"
-                  />
+                  <input name="name" value={customerData.name} onChange={handleChange} placeholder="Seu nome" />
                 </div>
 
                 <div className="checkout-field">
                   <label>Telefone</label>
-                  <input
-                    name="phone"
-                    value={customerData.phone}
-                    onChange={handleChange}
-                    placeholder="(12) 99999-9999"
-                  />
+                  <input name="phone" value={customerData.phone} onChange={handleChange} placeholder="(12) 99999-9999" />
                 </div>
 
                 {deliveryType === 'delivery' && (
                   <>
                     <div className="checkout-field">
                       <label>Rua</label>
-                      <input
-                        name="street"
-                        value={customerData.street}
-                        onChange={handleChange}
-                        placeholder="Rua / Avenida"
-                      />
+                      <input name="street" value={customerData.street} onChange={handleChange} placeholder="Rua / Avenida" />
                     </div>
 
                     <div className="checkout-field">
                       <label>Número</label>
-                      <input
-                        name="number"
-                        value={customerData.number}
-                        onChange={handleChange}
-                        placeholder="Número"
-                      />
+                      <input name="number" value={customerData.number} onChange={handleChange} placeholder="Número" />
                     </div>
 
                     <div className="checkout-field">
                       <label>Bairro</label>
-                      <select
-                        name="neighborhood"
-                        value={customerData.neighborhood}
-                        onChange={handleChange}
-                      >
+                      <select name="neighborhood" value={customerData.neighborhood} onChange={handleChange}>
                         <option value="">Selecione o bairro</option>
                         {deliveryZones.map((zone) => (
                           <option key={zone.neighborhood} value={zone.neighborhood}>
@@ -294,11 +294,7 @@ ${changeText ? `*${changeText}*\n` : ''}${customerData.notes ? `*Observações:*
               <div className="checkout-payment-options">
                 <button
                   type="button"
-                  className={
-                    paymentMethod === 'pix'
-                      ? 'checkout-toggle-btn active'
-                      : 'checkout-toggle-btn'
-                  }
+                  className={paymentMethod === 'pix' ? 'checkout-toggle-btn active' : 'checkout-toggle-btn'}
                   onClick={() => setPaymentMethod('pix')}
                 >
                   Pix
@@ -306,11 +302,7 @@ ${changeText ? `*${changeText}*\n` : ''}${customerData.notes ? `*Observações:*
 
                 <button
                   type="button"
-                  className={
-                    paymentMethod === 'card'
-                      ? 'checkout-toggle-btn active'
-                      : 'checkout-toggle-btn'
-                  }
+                  className={paymentMethod === 'card' ? 'checkout-toggle-btn active' : 'checkout-toggle-btn'}
                   onClick={() => setPaymentMethod('card')}
                 >
                   Cartão
@@ -318,11 +310,7 @@ ${changeText ? `*${changeText}*\n` : ''}${customerData.notes ? `*Observações:*
 
                 <button
                   type="button"
-                  className={
-                    paymentMethod === 'cash'
-                      ? 'checkout-toggle-btn active'
-                      : 'checkout-toggle-btn'
-                  }
+                  className={paymentMethod === 'cash' ? 'checkout-toggle-btn active' : 'checkout-toggle-btn'}
                   onClick={() => setPaymentMethod('cash')}
                 >
                   Dinheiro
@@ -350,10 +338,7 @@ ${changeText ? `*${changeText}*\n` : ''}${customerData.notes ? `*Observações:*
 
             <div className="checkout-summary-items">
               {cartItems.map((item) => (
-                <div
-                  key={`${item.name}-${item.size ?? 'unico'}`}
-                  className="checkout-summary-item"
-                >
+                <div key={`${item.name}-${item.size ?? 'unico'}`} className="checkout-summary-item">
                   <div>
                     <strong>{item.name}</strong>
                     <p>

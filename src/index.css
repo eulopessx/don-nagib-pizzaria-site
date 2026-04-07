@@ -1183,3 +1183,16 @@ ul {
   flex-wrap: wrap;
   gap: 12px;
 }
+.account-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.account-section-block {
+  padding: 20px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 183, 3, 0.08);
+}

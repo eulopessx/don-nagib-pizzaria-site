@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import Header from './components/layout/Header'
 import Footer from './components/layout/Footer'
+import ScrollToTop from './components/layout/ScrollToTop'
 import HomePage from './pages/HomePage'
 import MenuPage from './pages/MenuPage'
 import CartPage from './pages/CartPage'
@@ -13,6 +14,7 @@ import ProtectedRoute from './routes/ProtectedRoute'
 export default function App() {
   return (
     <>
+      <ScrollToTop />
       <Header />
 
       <Routes>

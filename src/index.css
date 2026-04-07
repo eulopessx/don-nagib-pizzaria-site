@@ -1475,17 +1475,21 @@ ul {
   flex-direction: column;
   gap: 14px;
   padding-top: 6px;
+  width: 100%;
 }
 
 .admin-check-label {
-  display: flex;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
   align-items: center;
-  gap: 12px;
+  column-gap: 12px;
   font-weight: 700;
   color: var(--text-soft);
   line-height: 1.2;
-  word-break: normal;
   white-space: normal;
+  word-break: normal;
+  overflow-wrap: break-word;
 }
 
 .admin-check-label input {
@@ -1524,5 +1528,23 @@ ul {
 
   .admin-form-actions .btn {
     width: 100%;
+  }
+}
+.admin-inner-form .checkout-field.checkout-field-full {
+  min-width: 0;
+}
+
+.admin-inner-form .checkout-field.checkout-field-full .admin-checkbox-stack {
+  max-width: 100%;
+}
+
+@media (max-width: 720px) {
+  .admin-check-label {
+    grid-template-columns: 22px minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .admin-check-label span {
+    font-size: 0.98rem;
   }
 }

@@ -116,7 +116,7 @@ export default function CheckoutPage() {
     const itemsText = cartItems
       .map((item) => {
         const sizeText = item.size ? ` | Tamanho ${item.size}` : ''
-        const totalItem = Number(item.price) * item.quantity
+        const totalItem = item.price * item.quantity
         return `• ${item.quantity}x ${item.name}${sizeText} — R$ ${formatMoney(totalItem)}`
       })
       .join('\n')
@@ -347,7 +347,7 @@ ${changeText ? `*${changeText}*\n` : ''}${customerData.notes ? `*Observações:*
                   </div>
 
                   <span>
-                    R$ {(Number(item.price) * item.quantity).toFixed(2).replace('.', ',')}
+                    R$ {(item.price * item.quantity).toFixed(2).replace('.', ',')}
                   </span>
                 </div>
               ))}

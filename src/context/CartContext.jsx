@@ -2,15 +2,26 @@ import { createContext, useContext, useMemo, useState } from 'react'
 
 const CartContext = createContext()
 
+function parsePrice(value) {
+  if (typeof value === 'number') return value
+  if (!value) return 0
+  return Number(String(value).replace(',', '.'))
+}
+
 export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([])
 
   function addToCart(item) {
+    const normalizedItem = {
+      ...item,
+      price: parsePrice(item.price),
+    }
+
     setCartItems((currentItems) => {
       const existingIndex = currentItems.findIndex(
         (cartItem) =>
-          cartItem.name === item.name &&
-          cartItem.size === item.size
+          cartItem.name === normalizedItem.name &&
+          cartItem.size === normalizedItem.size
       )
 
       if (existingIndex !== -1) {
@@ -21,7 +32,7 @@ export function CartProvider({ children }) {
         )
       }
 
-      return [...currentItems, { ...item, quantity: 1 }]
+      return [...currentItems, { ...normalizedItem, quantity: 1 }]
     })
   }
 
@@ -67,7 +78,7 @@ export function CartProvider({ children }) {
   const subtotal = useMemo(
     () =>
       cartItems.reduce(
-        (total, item) => total + Number(item.price) * item.quantity,
+        (total, item) => total + item.price * item.quantity,
         0
       ),
     [cartItems]

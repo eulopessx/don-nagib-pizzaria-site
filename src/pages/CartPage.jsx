@@ -47,7 +47,8 @@ export default function CartPage() {
                   <div className="cart-item-info">
                     <h3>{item.name}</h3>
                     <p>
-                      {item.size ? `Tamanho ${item.size}` : 'Item único'} • R$ {item.price}
+                      {item.size ? `Tamanho ${item.size}` : 'Item único'} • R${' '}
+                      {item.price.toFixed(2).replace('.', ',')}
                     </p>
                   </div>
 
@@ -63,7 +64,7 @@ export default function CartPage() {
                     </div>
 
                     <strong className="cart-item-total">
-                      R$ {(Number(item.price) * item.quantity).toFixed(2).replace('.', ',')}
+                      R$ {(item.price * item.quantity).toFixed(2).replace('.', ',')}
                     </strong>
 
                     <button

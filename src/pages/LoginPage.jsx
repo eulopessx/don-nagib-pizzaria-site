@@ -4,7 +4,7 @@ import { LogIn, UserPlus } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 export default function LoginPage() {
-  const { signIn, signUp, isAuthenticated, authLoading } = useAuth()
+  const { signIn, signUp, signInWithGoogle, isAuthenticated, authLoading } = useAuth()
 
   const [mode, setMode] = useState('login')
   const [formData, setFormData] = useState({
@@ -13,6 +13,7 @@ export default function LoginPage() {
     confirmPassword: '',
   })
   const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -64,7 +65,7 @@ export default function LoginPage() {
           setErrorMessage(error.message)
         } else {
           setMessage(
-            'Cadastro realizado. Se a confirmação de email estiver ativa no Supabase, confira sua caixa de entrada.'
+            'Cadastro realizado. Confira seu email para confirmar a conta, se a confirmação estiver ativa.'
           )
           setFormData({
             email: '',
@@ -79,10 +80,22 @@ export default function LoginPage() {
           setErrorMessage(error.message)
         }
       }
-    } catch (error) {
+    } catch {
       setErrorMessage('Ocorreu um erro inesperado.')
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function handleGoogleLogin() {
+    setGoogleLoading(true)
+    setErrorMessage('')
+
+    const { error } = await signInWithGoogle()
+
+    if (error) {
+      setErrorMessage(error.message)
+      setGoogleLoading(false)
     }
   }
 
@@ -127,6 +140,17 @@ export default function LoginPage() {
                 onClick={() => setMode('register')}
               >
                 Cadastro
+              </button>
+            </div>
+
+            <div className="auth-social">
+              <button
+                type="button"
+                className="btn btn-secondary auth-google-btn"
+                onClick={handleGoogleLogin}
+                disabled={googleLoading}
+              >
+                {googleLoading ? 'Abrindo Google...' : 'Continuar com Google'}
               </button>
             </div>
 

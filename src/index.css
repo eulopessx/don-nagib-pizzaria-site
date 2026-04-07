@@ -1345,3 +1345,10 @@ ul {
   gap: 12px;
   flex-wrap: wrap;
 }
+.auth-social {
+  margin-top: 18px;
+}
+
+.auth-google-btn {
+  width: 100%;
+}

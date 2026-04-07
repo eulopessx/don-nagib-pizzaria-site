@@ -51,6 +51,9 @@ export function AuthProvider({ children }) {
     return supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: window.location.origin,
+      },
     })
   }
 
@@ -58,6 +61,15 @@ export function AuthProvider({ children }) {
     return supabase.auth.signInWithPassword({
       email,
       password,
+    })
+  }
+
+  async function signInWithGoogle() {
+    return supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin,
+      },
     })
   }
 
@@ -76,6 +88,7 @@ export function AuthProvider({ children }) {
       isAdmin,
       signUp,
       signIn,
+      signInWithGoogle,
       signOut,
     }),
     [session, user, authLoading, isAdmin]

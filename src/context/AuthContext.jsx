@@ -47,15 +47,20 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
-  async function signUp({ email, password }) {
-    return supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: window.location.origin,
-      },
-    })
-  }
+async function signUp({ email, password }) {
+  const emailRedirectTo =
+    window.location.hostname === 'localhost'
+      ? 'http://localhost:5173'
+      : 'https://don-nagib-pizzaria-site.vercel.app'
+
+  return supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo,
+    },
+  })
+}
 
   async function signIn({ email, password }) {
     return supabase.auth.signInWithPassword({
@@ -64,18 +69,19 @@ export function AuthProvider({ children }) {
     })
   }
 
-  async function signInWithGoogle() {
-    return supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin,
-      },
-    })
-  }
+ async function signInWithGoogle() {
+  const redirectTo =
+    window.location.hostname === 'localhost'
+      ? 'http://localhost:5173'
+      : 'https://don-nagib-pizzaria-site.vercel.app'
 
-  async function signOut() {
-    return supabase.auth.signOut()
-  }
+  return supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo,
+    },
+  })
+}
 
   const isAdmin = ADMIN_EMAILS.includes(user?.email?.toLowerCase())
 

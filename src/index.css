@@ -1568,3 +1568,13 @@ ul {
   border-color: rgba(255, 183, 3, 0.4);
   box-shadow: 0 0 0 3px rgba(255, 183, 3, 0.12);
 }
+.admin-inner-form .checkout-field select {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff7ed;
+  font-weight: 600;
+}
+
+.admin-inner-form .checkout-field select option {
+  background: #2a0d0d;
+  color: #fff7ed;
+}

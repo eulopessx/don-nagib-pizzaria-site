@@ -25,10 +25,20 @@ import {
   updateDeliveryZone,
 } from '../services/deliveryZoneService'
 
+const DEFAULT_CATEGORIES = [
+  'Promocional',
+  'Tradicional',
+  'Premium',
+  'Pizzas Doces',
+  'Bebidas',
+  'Adicionais',
+]
+
 const initialForm = {
   name: '',
   description: '',
   category: 'Promocional',
+  newCategory: '',
   has_size_m: true,
   has_size_g: true,
   price_m: '',
@@ -366,6 +376,16 @@ function AdminProductsBlock() {
   const [errorMessage, setErrorMessage] = useState('')
   const [formData, setFormData] = useState(initialForm)
 
+  const categoryOptions = useMemo(() => {
+    const categoriesFromProducts = products
+      .map((product) => product.category)
+      .filter(Boolean)
+
+    return [...new Set([...DEFAULT_CATEGORIES, ...categoriesFromProducts])].sort((a, b) =>
+      a.localeCompare(b, 'pt-BR')
+    )
+  }, [products])
+
   async function loadProducts() {
     setLoading(true)
     const { data, error } = await getProducts()
@@ -398,11 +418,21 @@ function AdminProductsBlock() {
     setErrorMessage('')
 
     const hasAnySize = formData.has_size_m || formData.has_size_g
+    const finalCategory =
+      formData.category === '__new__'
+        ? formData.newCategory.trim()
+        : formData.category
+
+    if (!finalCategory) {
+      setErrorMessage('Informe uma categoria válida.')
+      setSaving(false)
+      return
+    }
 
     const payload = {
       name: formData.name,
       description: formData.description,
-      category: formData.category,
+      category: finalCategory,
       has_sizes: hasAnySize,
       has_size_m: formData.has_size_m,
       has_size_g: formData.has_size_g,
@@ -443,6 +473,7 @@ function AdminProductsBlock() {
       name: product.name || '',
       description: product.description || '',
       category: product.category || 'Promocional',
+      newCategory: '',
       has_size_m: product.has_size_m ?? !!product.price_m,
       has_size_g: product.has_size_g ?? !!product.price_g,
       price_m: product.price_m ?? '',
@@ -499,14 +530,26 @@ function AdminProductsBlock() {
           <div className="checkout-field">
             <label>Categoria</label>
             <select name="category" value={formData.category} onChange={handleChange}>
-              <option>Promocional</option>
-              <option>Tradicional</option>
-              <option>Premium</option>
-              <option>Pizzas Doces</option>
-              <option>Bebidas</option>
-              <option>Adicionais</option>
+              {categoryOptions.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+              <option value="__new__">+ Nova categoria</option>
             </select>
           </div>
+
+          {formData.category === '__new__' && (
+            <div className="checkout-field checkout-field-full">
+              <label>Nome da nova categoria</label>
+              <input
+                name="newCategory"
+                value={formData.newCategory}
+                onChange={handleChange}
+                placeholder="Ex: Combos, Massas, Sobremesas..."
+              />
+            </div>
+          )}
 
           <div className="checkout-field checkout-field-full">
             <label>Descrição</label>

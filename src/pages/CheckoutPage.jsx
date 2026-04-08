@@ -2,13 +2,14 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { CreditCard, MapPin, ShoppingBag, Truck } from 'lucide-react'
 import { useCart } from '../context/CartContext'
-import { deliveryZones } from '../data/deliveryZones'
 import { useAuth } from '../context/AuthContext'
 import { getMyDefaultAddress, getMyProfile } from '../services/accountService'
+import { useDeliveryZones } from '../hooks/useDeliveryZones'
 
 export default function CheckoutPage() {
   const { cartItems, subtotal } = useCart()
   const { user } = useAuth()
+  const { zones: deliveryZones, loading: deliveryZonesLoading } = useDeliveryZones()
 
   const [deliveryType, setDeliveryType] = useState('delivery')
   const [paymentMethod, setPaymentMethod] = useState('pix')
@@ -61,8 +62,8 @@ export default function CheckoutPage() {
       (zone) => zone.neighborhood === customerData.neighborhood
     )
 
-    return selectedZone ? selectedZone.fee : 0
-  }, [deliveryType, customerData.neighborhood])
+    return selectedZone ? Number(selectedZone.fee) : 0
+  }, [deliveryType, customerData.neighborhood, deliveryZones])
 
   const total = subtotal + deliveryFee
 
@@ -251,10 +252,12 @@ ${changeText ? `*${changeText}*\n` : ''}${customerData.notes ? `*Observações:*
                     <div className="checkout-field">
                       <label>Bairro</label>
                       <select name="neighborhood" value={customerData.neighborhood} onChange={handleChange}>
-                        <option value="">Selecione o bairro</option>
+                        <option value="">
+                          {deliveryZonesLoading ? 'Carregando bairros...' : 'Selecione o bairro'}
+                        </option>
                         {deliveryZones.map((zone) => (
-                          <option key={zone.neighborhood} value={zone.neighborhood}>
-                            {zone.neighborhood} — R$ {zone.fee.toFixed(2).replace('.', ',')}
+                          <option key={zone.id} value={zone.neighborhood}>
+                            {zone.neighborhood} — R$ {Number(zone.fee).toFixed(2).replace('.', ',')}
                           </option>
                         ))}
                       </select>

@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   Trash2,
   Pizza,
+  MapPin,
 } from 'lucide-react'
 import {
   createProduct,
@@ -17,6 +18,12 @@ import {
   updateProduct,
 } from '../services/productService'
 import { getSiteSettings, upsertSiteSetting } from '../services/siteSettingsService'
+import {
+  createDeliveryZone,
+  deleteDeliveryZone,
+  getDeliveryZones,
+  updateDeliveryZone,
+} from '../services/deliveryZoneService'
 
 const initialForm = {
   name: '',
@@ -30,13 +37,13 @@ const initialForm = {
   active: true,
 }
 
-function AdminAccordionItem({
-  icon,
-  title,
-  isOpen,
-  onToggle,
-  children,
-}) {
+const initialZoneForm = {
+  neighborhood: '',
+  fee: '',
+  active: true,
+}
+
+function AdminAccordionItem({ icon, title, isOpen, onToggle, children }) {
   return (
     <section className="admin-accordion-item card">
       <button type="button" className="admin-accordion-trigger" onClick={onToggle}>
@@ -165,6 +172,187 @@ function AdminSettingsBlock() {
         </button>
       </div>
     </form>
+  )
+}
+
+function AdminDeliveryZonesBlock() {
+  const [zones, setZones] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [editingId, setEditingId] = useState(null)
+  const [message, setMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [formData, setFormData] = useState(initialZoneForm)
+
+  async function loadZones() {
+    setLoading(true)
+    const { data, error } = await getDeliveryZones()
+
+    if (error) {
+      setErrorMessage(error.message)
+    } else {
+      setZones(data || [])
+    }
+
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    loadZones()
+  }, [])
+
+  function handleChange(event) {
+    const { name, value, type, checked } = event.target
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }))
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+    setSaving(true)
+    setMessage('')
+    setErrorMessage('')
+
+    const payload = {
+      neighborhood: formData.neighborhood,
+      fee: Number(String(formData.fee).replace(',', '.')),
+      active: formData.active,
+    }
+
+    const result = editingId
+      ? await updateDeliveryZone(editingId, payload)
+      : await createDeliveryZone(payload)
+
+    if (result.error) {
+      setErrorMessage(result.error.message)
+    } else {
+      setMessage(editingId ? 'Taxa atualizada com sucesso.' : 'Taxa cadastrada com sucesso.')
+      setFormData(initialZoneForm)
+      setEditingId(null)
+      await loadZones()
+    }
+
+    setSaving(false)
+  }
+
+  function handleEdit(zone) {
+    setEditingId(zone.id)
+    setFormData({
+      neighborhood: zone.neighborhood || '',
+      fee: zone.fee ?? '',
+      active: zone.active,
+    })
+  }
+
+  async function handleDelete(id) {
+    const confirmed = window.confirm('Deseja excluir esta região?')
+    if (!confirmed) return
+
+    const { error } = await deleteDeliveryZone(id)
+
+    if (error) {
+      setErrorMessage(error.message)
+      return
+    }
+
+    setMessage('Região excluída com sucesso.')
+    await loadZones()
+  }
+
+  function resetForm() {
+    setEditingId(null)
+    setFormData(initialZoneForm)
+    setMessage('')
+    setErrorMessage('')
+  }
+
+  return (
+    <>
+      <form className="admin-inner-form" onSubmit={handleSubmit}>
+        <div className="checkout-form-grid">
+          <div className="checkout-field">
+            <label>Bairro / Região</label>
+            <input
+              name="neighborhood"
+              value={formData.neighborhood}
+              onChange={handleChange}
+              placeholder="Ex: Liberdade"
+            />
+          </div>
+
+          <div className="checkout-field">
+            <label>Taxa</label>
+            <input
+              name="fee"
+              value={formData.fee}
+              onChange={handleChange}
+              placeholder="Ex: 3,00"
+            />
+          </div>
+
+          <div className="checkout-field checkout-field-full">
+            <label className="admin-check-label">
+              <input
+                type="checkbox"
+                name="active"
+                checked={formData.active}
+                onChange={handleChange}
+              />
+              <span>Região ativa</span>
+            </label>
+          </div>
+        </div>
+
+        {message && <div className="auth-message success">{message}</div>}
+        {errorMessage && <div className="auth-message error">{errorMessage}</div>}
+
+        <div className="admin-form-actions">
+          <button className="btn btn-primary" type="submit" disabled={saving}>
+            {saving ? 'Salvando...' : editingId ? 'Atualizar taxa' : 'Cadastrar taxa'}
+          </button>
+
+          <button className="btn btn-secondary" type="button" onClick={resetForm}>
+            Limpar formulário
+          </button>
+        </div>
+      </form>
+
+      {loading ? (
+        <div className="card" style={{ padding: '24px' }}>Carregando taxas...</div>
+      ) : (
+        <div className="admin-products-grid">
+          {zones.map((zone) => (
+            <article key={zone.id} className="admin-product-card card">
+              <div className="admin-product-top">
+                <span className="admin-product-category">
+                  {zone.active ? 'Ativa' : 'Inativa'}
+                </span>
+                <h3>{zone.neighborhood}</h3>
+              </div>
+
+              <div className="admin-product-prices">
+                <div className="admin-price-pill single">
+                  <span>Taxa</span>
+                  <strong>R$ {Number(zone.fee || 0).toFixed(2).replace('.', ',')}</strong>
+                </div>
+              </div>
+
+              <div className="admin-card-actions">
+                <button className="btn btn-secondary" type="button" onClick={() => handleEdit(zone)}>
+                  Editar
+                </button>
+
+                <button className="btn btn-secondary" type="button" onClick={() => handleDelete(zone.id)}>
+                  Excluir
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </>
   )
 }
 
@@ -498,7 +686,7 @@ export default function AdminPage() {
             <ShieldCheck size={16} />
             Painel administrativo
           </span>
-          <h1 className="section-title">Gerenciar site e produtos</h1>
+          <h1 className="section-title">Gerenciar site, taxas e produtos</h1>
           <p className="section-subtitle">
             Organize as modificações por seções recolhíveis.
           </p>
@@ -512,6 +700,15 @@ export default function AdminPage() {
             onToggle={() => toggleSection('settings')}
           >
             <AdminSettingsBlock />
+          </AdminAccordionItem>
+
+          <AdminAccordionItem
+            icon={<MapPin size={16} />}
+            title="Taxas de entrega"
+            isOpen={openSection === 'zones'}
+            onToggle={() => toggleSection('zones')}
+          >
+            <AdminDeliveryZonesBlock />
           </AdminAccordionItem>
 
           <AdminAccordionItem

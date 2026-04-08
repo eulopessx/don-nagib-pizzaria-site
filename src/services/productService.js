@@ -7,6 +7,15 @@ export async function getProducts() {
     .order('created_at', { ascending: false })
 }
 
+export async function getActiveProducts() {
+  return supabase
+    .from('products')
+    .select('*')
+    .eq('active', true)
+    .order('category', { ascending: true })
+    .order('name', { ascending: true })
+}
+
 export async function createProduct(product) {
   return supabase
     .from('products')

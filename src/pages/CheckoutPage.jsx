@@ -13,6 +13,7 @@ export default function CheckoutPage() {
 
   const [deliveryType, setDeliveryType] = useState('delivery')
   const [paymentMethod, setPaymentMethod] = useState('pix')
+  const [cardType, setCardType] = useState('credit')
   const [customerData, setCustomerData] = useState({
     name: '',
     phone: '',
@@ -81,7 +82,9 @@ export default function CheckoutPage() {
 
   function getPaymentLabel() {
     if (paymentMethod === 'pix') return 'Pix'
-    if (paymentMethod === 'card') return 'Cartão'
+    if (paymentMethod === 'card') {
+      return cardType === 'debit' ? 'Cartão - Débito' : 'Cartão - Crédito'
+    }
     if (paymentMethod === 'cash') return 'Dinheiro'
     return paymentMethod
   }
@@ -124,10 +127,11 @@ export default function CheckoutPage() {
 
     const addressText =
       deliveryType === 'delivery'
-        ? `Rua: ${customerData.street}, Nº ${customerData.number}
+        ? `*Endereço:*
+Rua: ${customerData.street}, Nº ${customerData.number}
 Bairro: ${customerData.neighborhood}
 Complemento: ${customerData.complement || 'Não informado'}`
-        : 'Retirada no local'
+        : '*Retirada:* No local'
 
     const changeText =
       paymentMethod === 'cash'
@@ -141,7 +145,6 @@ Complemento: ${customerData.complement || 'Não informado'}`
 
 *Tipo:* ${deliveryType === 'delivery' ? 'Entrega' : 'Retirada'}
 
-*Endereço / Retirada:*
 ${addressText}
 
 *Itens do pedido:*
@@ -319,6 +322,26 @@ ${changeText ? `*${changeText}*\n` : ''}${customerData.notes ? `*Observações:*
                   Dinheiro
                 </button>
               </div>
+
+              {paymentMethod === 'card' && (
+                <div className="checkout-payment-options checkout-suboptions">
+                  <button
+                    type="button"
+                    className={cardType === 'credit' ? 'checkout-toggle-btn active' : 'checkout-toggle-btn'}
+                    onClick={() => setCardType('credit')}
+                  >
+                    Crédito
+                  </button>
+
+                  <button
+                    type="button"
+                    className={cardType === 'debit' ? 'checkout-toggle-btn active' : 'checkout-toggle-btn'}
+                    onClick={() => setCardType('debit')}
+                  >
+                    Débito
+                  </button>
+                </div>
+              )}
 
               {paymentMethod === 'cash' && (
                 <div className="checkout-form-grid checkout-cash-grid">

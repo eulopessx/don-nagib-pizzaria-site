@@ -148,7 +148,7 @@ export default function MenuPage() {
                 </span>
                 <h2 className="menu-section-title">Escolha 2 sabores</h2>
                 <p className="section-subtitle">
-                  O valor da pizza meio a meio será definido pelo sabor valor, conforme o tamanho selecionado.
+                  O valor da pizza meio a meio será definido pelo sabor de meior valor, conforme o tamanho selecionado.
                 </p>
               </div>
 

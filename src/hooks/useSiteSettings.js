@@ -37,6 +37,9 @@ export function useSiteSettings() {
       aboutText:
         settings.about_text ||
         'Ingredientes de qualidade, massa crocante e macia por dentro, tudo feito com muito carinho.',
+      halfHalfAllowedCategories:
+        settings.half_half_allowed_categories ||
+        'Promocional,Tradicional,Premium,Pizzas Doces',
     }),
     [settings]
   )

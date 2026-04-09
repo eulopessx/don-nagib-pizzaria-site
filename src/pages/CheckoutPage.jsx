@@ -118,12 +118,20 @@ export default function CheckoutPage() {
     }
 
     const itemsText = cartItems
-      .map((item) => {
-        const sizeText = item.size ? ` | Tamanho ${item.size}` : ''
-        const totalItem = item.price * item.quantity
-        return `• ${item.quantity}x ${item.name}${sizeText} — R$ ${formatMoney(totalItem)}`
-      })
-      .join('\n')
+  .map((item) => {
+    const totalItem = item.price * item.quantity
+
+    if (item.halfHalf) {
+      return `• ${item.quantity}x Pizza Meio a Meio | Tamanho ${item.size}
+  - 1/2 ${item.halfHalf.flavorOne}
+  - 1/2 ${item.halfHalf.flavorTwo}
+  - Valor aplicado: R$ ${formatMoney(totalItem)}`
+    }
+
+    const sizeText = item.size ? ` | Tamanho ${item.size}` : ''
+    return `• ${item.quantity}x ${item.name}${sizeText} — R$ ${formatMoney(totalItem)}`
+  })
+  .join('\n')
 
     const addressText =
       deliveryType === 'delivery'

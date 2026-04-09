@@ -41,15 +41,23 @@ export default function CartPage() {
             <div className="cart-items">
               {cartItems.map((item) => (
                 <article
-                  key={`${item.name}-${item.size ?? 'unico'}`}
+                  key={`${item.name}-${item.size ?? 'unico'}-${item.halfHalf?.flavorOne ?? ''}-${item.halfHalf?.flavorTwo ?? ''}`}
                   className="cart-item card"
                 >
                   <div className="cart-item-info">
                     <h3>{item.name}</h3>
-                    <p>
-                      {item.size ? `Tamanho ${item.size}` : 'Item único'} • R${' '}
-                      {item.price.toFixed(2).replace('.', ',')}
-                    </p>
+
+                    {item.halfHalf ? (
+                      <p>
+                        Meio a meio: {item.halfHalf.flavorOne} / {item.halfHalf.flavorTwo} •
+                        Tamanho {item.size} • R$ {item.price.toFixed(2).replace('.', ',')}
+                      </p>
+                    ) : (
+                      <p>
+                        {item.size ? `Tamanho ${item.size}` : 'Item único'} • R${' '}
+                        {item.price.toFixed(2).replace('.', ',')}
+                      </p>
+                    )}
                   </div>
 
                   <div className="cart-item-actions">

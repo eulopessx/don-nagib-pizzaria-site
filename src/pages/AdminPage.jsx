@@ -82,6 +82,7 @@ function AdminSettingsBlock() {
     hero_title: '',
     hero_subtitle: '',
     about_text: '',
+    half_half_allowed_categories: '',
   })
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
@@ -170,6 +171,17 @@ function AdminSettingsBlock() {
             value={form.about_text}
             onChange={handleChange}
             rows="3"
+          />
+        </div>
+
+        <div className="checkout-field checkout-field-full">
+          <label>Categorias permitidas no meio a meio</label>
+          <textarea
+            name="half_half_allowed_categories"
+            value={form.half_half_allowed_categories}
+            onChange={handleChange}
+            rows="3"
+            placeholder="Ex: Promocional,Tradicional,Premium,Pizzas Doces"
           />
         </div>
       </div>
